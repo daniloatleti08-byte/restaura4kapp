@@ -1,0 +1,79 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --color-dark-bg: #0A0A0A;
+  --color-dark-card: #141414;
+  --color-dark-border: #2A2A2A;
+  --color-gold-start: #C9A84C;
+  --color-gold-end: #A07830;
+  --color-text-muted: #8E8E8E;
+}
+
+@layer base {
+  body {
+    @apply bg-dark-bg text-white font-sans antialiased;
+  }
+}
+
+@layer utilities {
+  .text-gold-gradient {
+    background: linear-gradient(135deg, var(--color-gold-start), var(--color-gold-end));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  .bg-gold-gradient {
+    background: linear-gradient(135deg, var(--color-gold-start), var(--color-gold-end));
+    color: #000;
+    font-weight: 700;
+    transition: transform 0.2s, filter 0.2s;
+    border: none;
+  }
+  .bg-gold-gradient:hover {
+    transform: scale(1.02);
+    filter: brightness(1.1);
+  }
+  .border-gold-gradient {
+    border: 1px solid transparent;
+    background-image: linear-gradient(#141414, #141414), linear-gradient(135deg, #C9A84C, #A07830);
+    background-origin: border-box;
+    background-clip: padding-box, border-box;
+  }
+  .hover-gold-shadow:hover {
+    box-shadow: 0 4px 20px -5px rgba(201, 168, 76, 0.4);
+  }
+  .animate-progress-bar {
+    width: 0%;
+    animation: progress 30s linear infinite;
+  }
+}
+
+@keyframes progress {
+  0% { width: 0%; }
+  100% { width: 100%; }
+}
+
+/* Animations from Tailwind or Custom */
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slide-in-from-bottom {
+  from { transform: translateY(1rem); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+.animate-in {
+  animation-duration: 0.5s;
+  animation-fill-mode: forwards;
+}
+
+.fade-in {
+  animation-name: fade-in;
+}
+
+.slide-in-from-bottom-4 {
+  animation-name: slide-in-from-bottom;
+}
