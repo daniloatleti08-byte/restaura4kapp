@@ -26,7 +26,7 @@ export default function Home() {
             <span className="text-sm font-semibold text-white ml-2">4,9 de 5 estrelas</span>
           </div>
 
-          <h1 className="text-5xl md:text-[72px] leading-none font-extrabold tracking-[-2px] mb-6">
+          <h1 className="text-4xl sm:text-5xl md:text-[72px] leading-[1.1] md:leading-none font-extrabold tracking-[-1px] md:tracking-[-2px] mb-6">
             Restaure.<br />Reviva.<br />
             <span className="text-gold-gradient">Reimagine.</span>
           </h1>
@@ -34,10 +34,10 @@ export default function Home() {
             A memória da sua família, em três tempos. Estúdios cobram R$ 200 e levam dias. Aqui são 30 segundos. Restaure suas memórias a partir de R$ 9,90.
           </p>
 
-          <div className="flex gap-4">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 w-full">
             <Link 
               to="/editor"
-              className="inline-flex items-center justify-center px-9 py-4 text-base font-bold rounded-xl bg-gold-gradient shadow-lg"
+              className="inline-flex w-full sm:w-auto items-center justify-center px-8 py-4 text-base font-bold rounded-xl bg-gold-gradient shadow-lg"
             >
               Restaurar foto agora
             </Link>
@@ -68,11 +68,11 @@ export default function Home() {
       </section>
 
       {/* Stats Section */}
-      <section className="h-[120px] border-t border-dark-border bg-dark-card">
-        <div className="max-w-7xl mx-auto h-full grid grid-cols-4 items-center px-4 lg:px-10">
-          <StatBox title="97%" text="Clientes se emocionam" />
-          <StatBox title="30s" text="Tempo de espera" />
-          <StatBox title="92%" text="Para presentear" />
+      <section className="py-8 md:h-[120px] md:py-0 border-t border-dark-border bg-dark-card">
+        <div className="max-w-7xl mx-auto h-full grid grid-cols-2 md:grid-cols-4 gap-y-8 items-center px-4 lg:px-10">
+          <StatBox title="97%" text="Se emocionam" className="border-r border-dark-border md:border-r-dark-border" />
+          <StatBox title="30s" text="De espera" className="border-r-0 md:border-r md:border-dark-border" />
+          <StatBox title="92%" text="Presenteiam" className="border-r border-dark-border md:border-r-dark-border" />
           <StatBox title="30 Dias" text="Garantia Total" className="border-r-0" />
         </div>
       </section>
@@ -204,9 +204,9 @@ export default function Home() {
 
 function StatBox({ title, text, className = "" }: { title: string, text: string, className?: string }) {
   return (
-    <div className={`flex flex-col items-center text-center border-r border-dark-border h-full justify-center ${className}`}>
-      <span className="text-[24px] font-bold text-gold-start block mb-1">{title}</span>
-      <span className="text-[12px] text-text-muted uppercase tracking-[0.5px] font-medium">{text}</span>
+    <div className={`flex flex-col items-center text-center h-full justify-center px-2 ${className}`}>
+      <span className="text-[20px] md:text-[24px] font-bold text-gold-start block mb-1">{title}</span>
+      <span className="text-[10px] md:text-[12px] text-text-muted uppercase tracking-[0.5px] font-medium leading-tight">{text}</span>
     </div>
   );
 }
