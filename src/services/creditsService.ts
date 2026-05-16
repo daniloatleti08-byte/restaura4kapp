@@ -1,6 +1,6 @@
 import { supabase } from "../lib/supabase";
 
-const CREDITS_KEY = "restaura4k_creditos";
+const CREDITS_KEY = "restaura4k_creditos_v2";
 
 export const creditService = {
   getCredits: async (): Promise<number> => {
