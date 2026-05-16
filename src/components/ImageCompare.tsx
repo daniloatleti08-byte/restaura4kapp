@@ -42,14 +42,14 @@ export default function ImageCompare({ beforeImage, afterImage, beforeClassName 
       <img 
         src={beforeImage} 
         alt="Antes" 
-        className={`absolute inset-0 w-full h-full object-cover pointer-events-none ${beforeClassName}`}
+        className={`absolute inset-0 w-full h-full object-contain pointer-events-none ${beforeClassName}`}
       />
       
       {/* After Image (Clipped overlay) */}
       <img 
         src={afterImage} 
         alt="Depois" 
-        className={`absolute inset-0 w-full h-full object-cover pointer-events-none ${afterClassName}`}
+        className={`absolute inset-0 w-full h-full object-contain pointer-events-none ${afterClassName}`}
         style={{ clipPath: `inset(0 ${100 - sliderPosition}% 0 0)` }}
       />
       
