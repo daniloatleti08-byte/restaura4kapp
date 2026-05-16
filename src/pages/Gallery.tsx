@@ -31,10 +31,28 @@ export default function Gallery() {
     }
   };
 
-  const handleDownload = (url: string, tool: string) => {
+  const handleDownload = async (url: string, tool: string) => {
+    const filename = `restaura4k_${tool}_${Date.now()}.jpg`;
+
+    if (navigator.share) {
+      try {
+        const response = await fetch(url);
+        const blob = await response.blob();
+        const file = new File([blob], filename, { type: blob.type || 'image/jpeg' });
+        
+        await navigator.share({
+          files: [file],
+          title: 'Foto Restaurada 4K',
+        });
+        return;
+      } catch (err) {
+        console.log("Compartilhamento nativo cancelado ou falhou", err);
+      }
+    }
+
     const a = document.createElement('a');
     a.href = url;
-    a.download = `restaura4k_${tool}_${Date.now()}.jpg`;
+    a.download = filename;
     a.target = '_blank';
     document.body.appendChild(a);
     a.click();

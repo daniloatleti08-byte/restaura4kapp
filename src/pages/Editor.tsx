@@ -22,6 +22,7 @@ export default function Editor() {
   const [showPlansModal, setShowPlansModal] = useState(false);
   const [isSavedInGallery, setIsSavedInGallery] = useState(false);
   const [isEasyMode, setIsEasyMode] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
 
   const handleFileSelect = async (selectedFile: File) => {
     setFile(selectedFile);
@@ -66,40 +67,68 @@ export default function Editor() {
     }
   };
 
+  const triggerDownload = async (imageUrl: string, filename: string) => {
+    // Tenta usar a Web Share API nativa (perfeito para iOS/Android salvar direto na galeria)
+    if (navigator.share) {
+      try {
+        const response = await fetch(imageUrl);
+        const blob = await response.blob();
+        const file = new File([blob], filename, { type: blob.type || 'image/jpeg' });
+        
+        await navigator.share({
+          files: [file],
+          title: 'Foto Restaurada 4K',
+        });
+        return;
+      } catch (err) {
+        console.log("Compartilhamento nativo cancelado ou falhou", err);
+        // Se falhar/cancelar, cai para o método padrão abaixo
+      }
+    }
+
+    // Método padrão (PC e navegadores antigos)
+    const a = document.createElement("a");
+    a.href = imageUrl;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+  };
+
   const handleSave = async () => {
+    if (isSaving) return;
+
+    const filename = `restaura4k_${isEasyMode ? 'auto' : activeTool}_${Date.now()}.jpg`;
+
     // Se já foi salva, não gasta crédito, apenas baixa novamente
     if (isSavedInGallery && afterImage) {
-      const a = document.createElement("a");
-      a.href = afterImage;
-      a.download = `restaura4k_${isEasyMode ? 'auto' : activeTool}.jpg`;
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
+      await triggerDownload(afterImage, filename);
       return;
     }
 
     // Se é a primeira vez salvando, gasta crédito e envia pra galeria
-    const success = await creditService.useCredit();
-    if (success) {
-      if (afterImage) {
-        // Envia para o storage silenciosamente em background
+    setIsSaving(true);
+    try {
+      const success = await creditService.useCredit();
+      if (success && afterImage) {
         const { data: { session } } = await supabase.auth.getSession();
+        
         if (session?.user) {
-          galleryService.saveToGallery(session.user.id, afterImage, isEasyMode ? 'auto' : activeTool)
-            .then(() => setIsSavedInGallery(true))
-            .catch(console.error);
+          // Esperar salvar no banco e storage garantindo que vá pra galeria
+          await galleryService.saveToGallery(session.user.id, afterImage, isEasyMode ? 'auto' : activeTool);
+          setIsSavedInGallery(true);
         }
 
-        // Faz o download imediatamente para o usuário
-        const a = document.createElement("a");
-        a.href = afterImage;
-        a.download = `restaura4k_${isEasyMode ? 'auto' : activeTool}.jpg`;
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
+        // Dispara o download/compartilhamento pro usuário
+        await triggerDownload(afterImage, filename);
+      } else if (!success) {
+        setShowPlansModal(true);
       }
-    } else {
-      setShowPlansModal(true);
+    } catch (error) {
+      console.error(error);
+      alert("Ocorreu um erro ao salvar sua foto. Tente novamente.");
+    } finally {
+      setIsSaving(false);
     }
   };
 
@@ -172,10 +201,11 @@ export default function Editor() {
                 <div className="grid grid-cols-1 gap-4">
                   <button 
                     onClick={handleSave}
-                    className={`w-full py-8 rounded-[24px] text-2xl font-black shadow-[0_20px_40px_rgba(212,175,55,0.2)] flex items-center justify-center gap-4 transition-transform ${isSavedInGallery ? 'bg-green-600 text-white hover:bg-green-500' : 'bg-gold-gradient text-black hover:scale-[1.02]'}`}
+                    disabled={isSaving}
+                    className={`w-full py-8 rounded-[24px] text-2xl font-black shadow-[0_20px_40px_rgba(212,175,55,0.2)] flex items-center justify-center gap-4 transition-transform ${isSavedInGallery ? 'bg-green-600 text-white hover:bg-green-500' : 'bg-gold-gradient text-black hover:scale-[1.02]'} ${isSaving ? 'opacity-70 cursor-not-allowed' : ''}`}
                   >
-                    <Download className="w-8 h-8" />
-                    {isSavedInGallery ? 'Baixar Novamente (Grátis)' : 'Baixar minha foto'}
+                    {isSaving ? <Loader2 className="w-8 h-8 animate-spin" /> : <Download className="w-8 h-8" />}
+                    {isSaving ? 'Salvando na Galeria...' : (isSavedInGallery ? 'Baixar Novamente (Grátis)' : 'Baixar minha foto')}
                   </button>
                   
                   <button 
@@ -200,10 +230,15 @@ export default function Editor() {
                   
                   <button 
                     onClick={handleSave}
-                    className={`w-full sm:w-auto px-9 py-[18px] rounded-xl font-bold shadow-lg flex items-center justify-center gap-2 transition-transform ${isSavedInGallery ? 'bg-green-600 text-white hover:bg-green-500' : 'bg-gold-gradient text-black hover:scale-105'}`}
+                    disabled={isSaving}
+                    className={`w-full sm:w-auto px-9 py-[18px] rounded-xl font-bold shadow-lg flex items-center justify-center gap-2 transition-transform ${isSavedInGallery ? 'bg-green-600 text-white hover:bg-green-500' : 'bg-gold-gradient text-black hover:scale-105'} ${isSaving ? 'opacity-70 cursor-not-allowed' : ''}`}
                   >
-                    <Download className={`w-5 h-5 ${isSavedInGallery ? 'text-white' : 'text-black'}`} />
-                    {isSavedInGallery ? 'Baixar Novamente (Grátis)' : 'Salvar em 4K (1 Foto)'}
+                    {isSaving ? (
+                      <Loader2 className="w-5 h-5 animate-spin text-black" />
+                    ) : (
+                      <Download className={`w-5 h-5 ${isSavedInGallery ? 'text-white' : 'text-black'}`} />
+                    )}
+                    {isSaving ? 'Salvando...' : (isSavedInGallery ? 'Baixar Novamente' : 'Salvar em 4K (1 Foto)')}
                   </button>
                 </div>
                 
