@@ -24,7 +24,7 @@ export default function PlansModal({ isOpen, onClose }: PlansModalProps) {
           initial={{ scale: 0.95, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
           exit={{ scale: 0.95, opacity: 0 }}
-          className="bg-dark-card border border-dark-border rounded-2xl p-6 max-w-sm w-full relative shadow-2xl overflow-hidden"
+          className="bg-dark-card border border-gold-start/50 rounded-2xl p-6 max-w-sm w-full relative shadow-2xl overflow-hidden"
           onClick={(e) => e.stopPropagation()}
         >
           {/* Gold glow in top */}
@@ -42,19 +42,27 @@ export default function PlansModal({ isOpen, onClose }: PlansModalProps) {
               <Coins className="w-8 h-8 text-gold-start" />
             </div>
             
-            <h3 className="text-xl font-bold text-white mb-2">Você usou todas as suas fotos disponíveis</h3>
+            <h3 className="text-xl font-bold text-white mb-2">Você usou todas as suas fotos disponíveis.</h3>
             <p className="text-gray-400 text-sm mb-6">
-              Para continuar restaurando suas memórias em 4K Ultra e sem marca d'água, escolha um de nossos planos.
+              Escolha um plano para continuar restaurando suas memórias.
             </p>
 
-            <Link
-              to="/planos"
-              onClick={onClose}
-              className="w-full py-3 px-4 rounded-xl bg-gold-gradient font-medium text-center flex justify-center items-center gap-2 hover-gold-shadow transition-all"
-            >
-              <Sparkles className="w-4 h-4" />
-              Ver Planos
-            </Link>
+            <div className="w-full flex flex-col gap-3">
+              <Link
+                to="/planos"
+                onClick={onClose}
+                className="w-full py-3 px-4 rounded-xl bg-gold-gradient font-medium text-center flex justify-center items-center gap-2 text-black hover:scale-[1.02] transition-transform"
+              >
+                <Sparkles className="w-4 h-4" />
+                Ver Planos
+              </Link>
+              <button
+                onClick={onClose}
+                className="w-full py-3 px-4 rounded-xl border border-dark-border text-white font-medium hover:bg-white/5 transition-colors"
+              >
+                Fechar
+              </button>
+            </div>
           </div>
         </motion.div>
       </motion.div>

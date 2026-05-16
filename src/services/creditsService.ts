@@ -8,13 +8,13 @@ export const creditService = {
     
     if (session?.user) {
       const { data, error } = await supabase
-        .from('profiles')
-        .select('credits')
+        .from('usuarios')
+        .select('fotos_disponiveis')
         .eq('id', session.user.id)
         .single();
       
       if (!error && data) {
-        return data.credits;
+        return data.fotos_disponiveis;
       }
     }
 
@@ -35,15 +35,18 @@ export const creditService = {
     
     if (session?.user) {
       const { data, error } = await supabase
-        .from('profiles')
-        .select('credits')
+        .from('usuarios')
+        .select('fotos_disponiveis, fotos_usadas')
         .eq('id', session.user.id)
         .single();
       
-      if (!error && data && data.credits > 0) {
+      if (!error && data && data.fotos_disponiveis > 0) {
         const { error: updateError } = await supabase
-          .from('profiles')
-          .update({ credits: data.credits - 1 })
+          .from('usuarios')
+          .update({ 
+            fotos_disponiveis: data.fotos_disponiveis - 1,
+            fotos_usadas: (data.fotos_usadas || 0) + 1
+          })
           .eq('id', session.user.id);
         
         if (!updateError) {
@@ -69,15 +72,15 @@ export const creditService = {
     
     if (session?.user) {
       const { data, error } = await supabase
-        .from('profiles')
-        .select('credits')
+        .from('usuarios')
+        .select('fotos_disponiveis')
         .eq('id', session.user.id)
         .single();
       
       if (!error && data) {
         await supabase
-          .from('profiles')
-          .update({ credits: data.credits + amount })
+          .from('usuarios')
+          .update({ fotos_disponiveis: data.fotos_disponiveis + amount })
           .eq('id', session.user.id);
       }
     } else {
@@ -92,11 +95,11 @@ export const creditService = {
     
     // Subscribe to realtime changes in Supabase
     const channel = supabase
-      .channel('profile_changes')
+      .channel('usuarios_changes')
       .on('postgres_changes', { 
         event: 'UPDATE', 
         schema: 'public', 
-        table: 'profiles' 
+        table: 'usuarios' 
       }, () => {
         callback();
       })
