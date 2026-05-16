@@ -13,7 +13,56 @@ export const creditService = {
         .eq('id', session.user.id)
         .single();
       
+      // Se deu erro de "Não encontrado" (PGRST116), significa que é uma conta antiga 
+      // que foi criada ANTES da gente configurar o banco de dados.
+      if (error && error.code === 'PGRST116') {
+        // Verifica se a Cakto deixou créditos pendentes para este e-mail
+        const { data: pendente } = await supabase
+          .from('creditos_pendentes')
+          .select('fotos_disponiveis, plano')
+          .eq('email', session.user.email)
+          .single();
+
+        const startFotos = pendente ? pendente.fotos_disponiveis : 0;
+        const startPlano = pendente ? pendente.plano : 'gratuito';
+
+        // Cria a conta do usuário na tabela nova e já aplica os créditos
+        await supabase
+          .from('usuarios')
+          .insert({ 
+             id: session.user.id, 
+             email: session.user.email,
+             fotos_disponiveis: startFotos,
+             fotos_usadas: 0,
+             plano: startPlano
+          });
+          
+        if (pendente) {
+          await supabase.from('creditos_pendentes').delete().eq('email', session.user.email);
+        }
+        return startFotos;
+      } 
+      
       if (!error && data) {
+        // Se a conta existe, ainda vamos checar se tem algum crédito pendente
+        // que chegou por webhook enquanto ele estava com a página fechada.
+        const { data: pendente } = await supabase
+          .from('creditos_pendentes')
+          .select('fotos_disponiveis, plano')
+          .eq('email', session.user.email)
+          .single();
+          
+        if (pendente) {
+          const novoSaldo = data.fotos_disponiveis + pendente.fotos_disponiveis;
+          await supabase
+            .from('usuarios')
+            .update({ fotos_disponiveis: novoSaldo, plano: pendente.plano })
+            .eq('id', session.user.id);
+            
+          await supabase.from('creditos_pendentes').delete().eq('email', session.user.email);
+          return novoSaldo;
+        }
+
         return data.fotos_disponiveis;
       }
     }
