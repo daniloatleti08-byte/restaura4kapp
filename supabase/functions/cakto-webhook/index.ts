@@ -40,9 +40,12 @@ serve(async (req) => {
 
     console.log("Webhook em formato JSON:", JSON.stringify(body, null, 2));
 
-    const email = body?.email || body?.data?.email || body?.customer?.email || body?.cliente?.email;
-    const valor = body?.valor || body?.data?.valor || body?.transaction?.amount || body?.amount || 0;
-    const produto = body?.produto || body?.data?.produto || body?.product?.name || body?.produto?.nome || '';
+    // A Cakto envia os dados dentro de um array "data": [ { ... } ]
+    const payload = Array.isArray(body?.data) ? body.data[0] : (body?.data || body);
+
+    const email = payload?.customer?.email || payload?.cliente?.email || payload?.email;
+    const valor = payload?.baseAmount || payload?.amount || payload?.offer?.price || payload?.valor || 0;
+    const produto = payload?.offer?.name || payload?.product?.name || payload?.produto?.nome || payload?.produto || '';
 
     if (!email) {
       // Retorna 200 no teste vazio para a Cakto não achar que nossa API caiu
@@ -58,6 +61,7 @@ serve(async (req) => {
     let fotosToAdd = 0;
     let planoName = '';
 
+    // "Avulso 9,90" ou "9.9"
     if (valStr.includes('9.9') || prodStr.includes('avulso')) {
       fotosToAdd = 3;
       planoName = 'avulso';

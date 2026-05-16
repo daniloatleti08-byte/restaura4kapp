@@ -37,6 +37,11 @@ export default function Header() {
           <Link to="/" className="text-sm font-medium text-text-muted hover:text-white transition-colors">
             Início
           </Link>
+          {user && (
+            <Link to="/galeria" className="text-sm font-medium text-text-muted hover:text-white transition-colors">
+              Minha Galeria
+            </Link>
+          )}
           <Link to="/planos" className="text-sm font-medium text-text-muted hover:text-white transition-colors">
             Planos e Preços
           </Link>

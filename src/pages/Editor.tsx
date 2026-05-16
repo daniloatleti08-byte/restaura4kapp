@@ -1,13 +1,15 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import { Loader2, Wand2, Paintbrush, ImageIcon, Download, Image as ImageIconOutlined, Camera } from "lucide-react";
-import UploadArea from "../components/UploadArea";
-import ImageCompare from "../components/ImageCompare";
+import { ArrowRight, Image as ImageIcon, Download, Sparkles, SlidersHorizontal, Share2, Upload, ZoomIn, ZoomOut, Maximize2, RefreshCw, X, FileImage, User, Loader2, Wand2, Paintbrush, Camera } from 'lucide-react';
+import { supabase } from '../lib/supabase';
 import { aiService } from "../services/aiService";
 import { creditService } from "../services/creditsService";
+import { galleryService } from "../services/galleryService";
 import PlansModal from "../components/PlansModal";
 import EasyModeToggle from "../components/EasyModeToggle";
 import SeasonalSuggestion from "../components/SeasonalSuggestion";
+import UploadArea from "../components/UploadArea";
+import ImageCompare from "../components/ImageCompare";
 
 type Tool = "restaurar4k" | "restaurarHD" | "colorir" | "cartoon";
 
@@ -18,12 +20,14 @@ export default function Editor() {
   const [activeTool, setActiveTool] = useState<Tool>("restaurar4k");
   const [isProcessing, setIsProcessing] = useState(false);
   const [showPlansModal, setShowPlansModal] = useState(false);
-  const [isEasyMode, setIsEasyMode] = useState(false); // Default to Full Mode as requested
+  const [isSavedInGallery, setIsSavedInGallery] = useState(false);
+  const [isEasyMode, setIsEasyMode] = useState(false);
 
   const handleFileSelect = async (selectedFile: File) => {
     setFile(selectedFile);
     setBeforeImage(URL.createObjectURL(selectedFile));
     setAfterImage(null);
+    setIsSavedInGallery(false);
     
     // Auto-process in Easy Mode
     if (isEasyMode) {
@@ -53,6 +57,7 @@ export default function Editor() {
         }
       }
       setAfterImage(result);
+      setIsSavedInGallery(false);
     } catch (error) {
       console.error(error);
       alert("Erro ao processar imagem.");
@@ -62,9 +67,30 @@ export default function Editor() {
   };
 
   const handleSave = async () => {
+    // Se já foi salva, não gasta crédito, apenas baixa novamente
+    if (isSavedInGallery && afterImage) {
+      const a = document.createElement("a");
+      a.href = afterImage;
+      a.download = `restaura4k_${isEasyMode ? 'auto' : activeTool}.jpg`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      return;
+    }
+
+    // Se é a primeira vez salvando, gasta crédito e envia pra galeria
     const success = await creditService.useCredit();
     if (success) {
       if (afterImage) {
+        // Envia para o storage silenciosamente em background
+        const { data: { session } } = await supabase.auth.getSession();
+        if (session?.user) {
+          galleryService.saveToGallery(session.user.id, afterImage, isEasyMode ? 'auto' : activeTool)
+            .then(() => setIsSavedInGallery(true))
+            .catch(console.error);
+        }
+
+        // Faz o download imediatamente para o usuário
         const a = document.createElement("a");
         a.href = afterImage;
         a.download = `restaura4k_${isEasyMode ? 'auto' : activeTool}.jpg`;
@@ -146,10 +172,10 @@ export default function Editor() {
                 <div className="grid grid-cols-1 gap-4">
                   <button 
                     onClick={handleSave}
-                    className="w-full py-8 rounded-[24px] bg-gold-gradient text-black text-2xl font-black shadow-[0_20px_40px_rgba(212,175,55,0.2)] flex items-center justify-center gap-4 hover:scale-[1.02] transition-transform"
+                    className={`w-full py-8 rounded-[24px] text-2xl font-black shadow-[0_20px_40px_rgba(212,175,55,0.2)] flex items-center justify-center gap-4 transition-transform ${isSavedInGallery ? 'bg-green-600 text-white hover:bg-green-500' : 'bg-gold-gradient text-black hover:scale-[1.02]'}`}
                   >
                     <Download className="w-8 h-8" />
-                    Baixar minha foto
+                    {isSavedInGallery ? 'Baixar Novamente (Grátis)' : 'Baixar minha foto'}
                   </button>
                   
                   <button 
@@ -174,10 +200,10 @@ export default function Editor() {
                   
                   <button 
                     onClick={handleSave}
-                    className="w-full sm:w-auto px-9 py-[18px] rounded-xl bg-gold-gradient text-black font-bold shadow-lg flex items-center justify-center gap-2"
+                    className={`w-full sm:w-auto px-9 py-[18px] rounded-xl font-bold shadow-lg flex items-center justify-center gap-2 transition-transform ${isSavedInGallery ? 'bg-green-600 text-white hover:bg-green-500' : 'bg-gold-gradient text-black hover:scale-105'}`}
                   >
-                    <Download className="w-5 h-5 text-black" />
-                    Salvar em 4K (1 Foto)
+                    <Download className={`w-5 h-5 ${isSavedInGallery ? 'text-white' : 'text-black'}`} />
+                    {isSavedInGallery ? 'Baixar Novamente (Grátis)' : 'Salvar em 4K (1 Foto)'}
                   </button>
                 </div>
                 

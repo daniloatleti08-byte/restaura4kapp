@@ -10,6 +10,7 @@ import Home from "./pages/Home";
 import Editor from "./pages/Editor";
 import Plans from "./pages/Plans";
 import Auth from "./pages/Auth";
+import Gallery from "./pages/Gallery";
 
 export default function App() {
   return (
@@ -22,6 +23,7 @@ export default function App() {
             <Route path="/editor" element={<Editor />} />
             <Route path="/planos" element={<Plans />} />
             <Route path="/auth" element={<Auth />} />
+            <Route path="/galeria" element={<Gallery />} />
           </Routes>
         </main>
         <Footer />
