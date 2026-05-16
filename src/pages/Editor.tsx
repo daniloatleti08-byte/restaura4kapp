@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import { ArrowRight, Image as ImageIcon, Download, Sparkles, SlidersHorizontal, Share2, Upload, ZoomIn, ZoomOut, Maximize2, RefreshCw, X, FileImage, User, Loader2, Wand2, Paintbrush, Camera } from 'lucide-react';
+import { ArrowRight, Image as ImageIcon, Image as ImageIconOutlined, Download, Sparkles, SlidersHorizontal, Share2, Upload, ZoomIn, ZoomOut, Maximize2, RefreshCw, X, FileImage, User, Loader2, Wand2, Paintbrush, Camera } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import { aiService } from "../services/aiService";
 import { creditService } from "../services/creditsService";
