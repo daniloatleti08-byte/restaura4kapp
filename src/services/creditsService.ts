@@ -18,16 +18,13 @@ export const creditService = {
       }
     }
 
-    // Fallback to localStorage for guest users (or as a buffer)
+    // Fallback to localStorage for guest users
     const localCredits = localStorage.getItem(CREDITS_KEY);
-    const parsed = localCredits ? parseInt(localCredits, 10) : 0;
-    
-    // For testing/initial phase
-    if (localCredits === null || parsed < 10) {
-      localStorage.setItem(CREDITS_KEY, "10");
-      return 10;
+    if (localCredits === null) {
+      localStorage.setItem(CREDITS_KEY, "0");
+      return 0;
     }
-    return parsed;
+    return parseInt(localCredits, 10);
   },
 
   useCredit: async (): Promise<boolean> => {
