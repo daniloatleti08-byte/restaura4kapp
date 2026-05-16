@@ -17,7 +17,7 @@ export default function Home() {
   return (
     <div className="pt-24 pb-16">
       {/* Hero Section */}
-      <section className="max-w-7xl mx-auto px-4 lg:px-10 pt-16 pb-20 text-center grid lg:grid-cols-[1fr_1.2fr] gap-12 lg:gap-16 items-center">
+      <section className="max-w-7xl mx-auto px-4 lg:px-10 pt-8 sm:pt-16 pb-12 sm:pb-20 grid lg:grid-cols-[1fr_1.2fr] gap-8 lg:gap-16 items-center">
         <div className="text-left flex flex-col items-start">
           <div className="flex items-center gap-2 mb-6">
             <div className="flex gap-1 text-gold-start">
@@ -30,7 +30,7 @@ export default function Home() {
             Restaure.<br />Reviva.<br />
             <span className="text-gold-gradient">Reimagine.</span>
           </h1>
-          <p className="text-[18px] text-text-muted mb-10 max-w-xl leading-relaxed">
+          <p className="text-base sm:text-[18px] text-text-muted mb-8 sm:mb-10 max-w-xl leading-relaxed">
             A memória da sua família, em três tempos. Estúdios cobram R$ 200 e levam dias. Aqui são 30 segundos. Restaure suas memórias a partir de R$ 9,90.
           </p>
 
@@ -48,7 +48,7 @@ export default function Home() {
           </div>
         </div>
 
-        <div className="w-full relative h-[480px] rounded-[20px] shadow-[0_25px_50px_-12px_rgba(0,0,0,0.5)]">
+        <div className="w-full relative h-[260px] sm:h-[380px] lg:h-[480px] rounded-[20px] shadow-[0_25px_50px_-12px_rgba(0,0,0,0.5)]">
           <ImageCompare 
             beforeImage="https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&q=80&w=800"
             afterImage="https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&q=80&w=800"
@@ -80,9 +80,9 @@ export default function Home() {
       {/* Before and After Grid */}
       <section className="py-20 bg-dark-card/30">
         <div className="max-w-7xl mx-auto px-4">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold mb-4">Antes e depois. Sem retoque.</h2>
-            <p className="text-xl text-gray-400">Passe o mouse ou dedo e veja a mágica acontecer.</p>
+          <div className="text-center mb-10 sm:mb-16">
+            <h2 className="text-2xl sm:text-4xl font-bold mb-4">Antes e depois. Sem retoque.</h2>
+            <p className="text-base sm:text-xl text-gray-400">Passe o dedo e veja a mágica acontecer.</p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -153,7 +153,7 @@ export default function Home() {
       {/* Testimonials */}
       <section className="py-24">
         <div className="max-w-7xl mx-auto px-4">
-          <h2 className="text-4xl font-bold text-center mb-16">Quem restaurou, se emocionou.</h2>
+          <h2 className="text-2xl sm:text-4xl font-bold text-center mb-10 sm:mb-16">Quem restaurou, se emocionou.</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <TestimonialCard 
               name="Maria Clara" location="São Paulo, SP" year="Foto de 1978"
@@ -183,10 +183,10 @@ export default function Home() {
       <section className="py-32 text-center px-4 relative overflow-hidden">
         <div className="absolute inset-0 bg-gold-gradient opacity-10 pointer-events-none"></div>
         <div className="max-w-3xl mx-auto relative z-10">
-          <h2 className="text-4xl md:text-5xl font-bold mb-8">
+          <h2 className="text-2xl sm:text-4xl md:text-5xl font-bold mb-6 sm:mb-8">
             A foto que você ainda não restaurou está esperando.
           </h2>
-          <p className="text-xl text-gray-300 mb-10">
+          <p className="text-base sm:text-xl text-gray-300 mb-8 sm:mb-10">
             Escolha seu plano e comece agora.
           </p>
           <Link 

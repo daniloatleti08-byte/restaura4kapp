@@ -158,7 +158,7 @@ export default function Editor() {
 
         {beforeImage && afterImage && !isProcessing && (
           <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
-            <div className="w-full h-[480px]">
+            <div className="w-full h-[300px] sm:h-[400px] lg:h-[480px]">
               <ImageCompare beforeImage={beforeImage} afterImage={afterImage} isEditor={true} />
             </div>
             

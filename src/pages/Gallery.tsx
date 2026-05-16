@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import { Download, ImageIcon, Loader2, Calendar } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import { galleryService } from '../services/galleryService';
-import Header from '../components/Header';
 import { useNavigate } from 'react-router-dom';
 
 export default function Gallery() {
@@ -43,10 +42,8 @@ export default function Gallery() {
   };
 
   return (
-    <div className="min-h-screen bg-[#0A0A0A] text-white">
-      <Header />
-      
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <div className="pt-24 pb-16 min-h-screen">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
         <div className="mb-10 text-center">
           <h1 className="text-4xl md:text-5xl font-black mb-4">
             Minha <span className="text-transparent bg-clip-text bg-gold-gradient">Galeria</span>

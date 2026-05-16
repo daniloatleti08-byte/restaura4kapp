@@ -49,8 +49,8 @@ export default function Footer() {
           </div>
         </div>
 
-        <div className="pt-8 border-t border-dark-border flex flex-col md:flex-row items-center justify-between gap-4 text-xs text-gray-500">
-          <div className="flex items-center gap-4">
+        <div className="pt-8 border-t border-dark-border flex flex-col items-center justify-between gap-4 text-xs text-gray-500">
+          <div className="flex flex-col sm:flex-row items-center gap-2 sm:gap-4 text-center">
             <span>© 2024 Restaura 4K.</span>
             <span>CNPJ: 00.000.000/0001-00</span>
             <span className="flex items-center gap-1">
