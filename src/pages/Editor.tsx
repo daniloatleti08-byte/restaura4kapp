@@ -40,10 +40,13 @@ export default function Editor() {
     const fileToProcess = selectedFile || file;
     if (!fileToProcess) return;
     
-    // Rola a tela suavemente para o topo (especialmente útil no mobile)
-    window.scrollTo({ top: 0, behavior: "smooth" });
-    
     setIsProcessing(true);
+    
+    // Rola para o topo de forma suave após a renderização do Loader do React (evita que a mudança de altura quebre a rolagem)
+    setTimeout(() => {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+      document.documentElement.scrollTo({ top: 0, behavior: "smooth" });
+    }, 50);
     
     try {
       let result = "";
