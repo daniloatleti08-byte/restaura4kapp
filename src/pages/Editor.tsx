@@ -40,6 +40,9 @@ export default function Editor() {
     const fileToProcess = selectedFile || file;
     if (!fileToProcess) return;
     
+    // Rola a tela suavemente para o topo (especialmente útil no mobile)
+    window.scrollTo({ top: 0, behavior: "smooth" });
+    
     setIsProcessing(true);
     
     try {
