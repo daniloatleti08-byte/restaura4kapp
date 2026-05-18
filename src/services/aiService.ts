@@ -20,6 +20,10 @@ const editImageWithGemini = async (file: File, prompt: string): Promise<string> 
     const base64Data = await fileToBase64(file);
     const response = await ai.models.generateContent({
       model: 'gemini-3.1-flash-image-preview',
+      config: {
+        responseModalities: ['IMAGE', 'TEXT'],
+        temperature: 0.1,
+      },
       contents: {
         parts: [
           {
@@ -41,7 +45,7 @@ const editImageWithGemini = async (file: File, prompt: string): Promise<string> 
         return `data:${part.inlineData.mimeType || 'image/png'};base64,${part.inlineData.data}`;
       }
     }
-    
+
     // Fallback if no image returned
     throw new Error("A IA não retornou uma imagem editada.");
   } catch (err) {
@@ -54,35 +58,94 @@ export const aiService = {
   restoreImage: async (imageFile: File): Promise<string> => {
     return editImageWithGemini(
       imageFile,
-      "High-end professional 4K restoration. Reconstruct and sharpen the subject's face to be crystal clear and realistic. Remove all blur, pixelation, noise, and compression artifacts. CRITICAL RULE: Preserve the exact facial structure, eye position, nose shape, and mouth 100%. Do NOT modify the person's identity. The result must be photorealistic, as if taken with a modern high-end camera. No plastic, painted, or smoothed-out illustration look."
+      `You are a professional photo restoration tool. Your ONLY task is image technical enhancement — NOT creative reimagination.
+
+STRICT RULES (NEVER VIOLATE):
+- DO NOT change any person's face, facial features, identity, or likeness in any way.
+- DO NOT alter eye shape, nose, mouth, skin tone, hair, or any facial structure.
+- DO NOT add, remove, or move any element in the image.
+- DO NOT change colors, clothing, or background elements.
+- DO NOT apply any artistic, painted, or illustrative effect.
+
+ALLOWED corrections ONLY:
+- Increase sharpness and clarity (deblur)
+- Remove digital noise, grain, and compression artifacts (JPEG blocks)
+- Enhance fine detail (pores, texture, fabric threads) that was blurred
+- Improve overall brightness/contrast only if the image is clearly underexposed or overexposed
+- Upscale resolution to 4K quality
+
+Output: return the exact same photo with only the above technical corrections applied. The output must be photorealistic and indistinguishable from the original scene in terms of identity and content.`
     );
   },
 
   restoreImageAuto: async (imageFile: File): Promise<string> => {
     return editImageWithGemini(
       imageFile,
-      "Analyze this image for: film grain, fading (sepia/yellowed), low resolution, stains, moisture damage, tears, and analog noise. Based on your analysis, apply the optimal set of corrections: 4K upscaling, professional colorization (if B&W), reconstruction of damaged areas, and color/contrast correction. CRITICAL RULE: Maintain 100% of the facial identity and structure. Do NOT invent or change facial features. Preserve the original likeness perfectly. The output must be photorealistic, sharp, and look like a professional modern photograph. No artificial smoothing or illustration-like effects."
+      `You are a professional photo restoration tool. Your ONLY task is image technical enhancement — NOT creative reimagination.
+
+STRICT RULES (NEVER VIOLATE):
+- DO NOT change any person's face, facial features, identity, or likeness in any way.
+- DO NOT alter eye shape, nose, mouth, skin tone, hair, or any facial structure.
+- DO NOT add, remove, or move any element in the image.
+- DO NOT apply any artistic, painted, or illustrative effect.
+
+ALLOWED corrections ONLY (auto-detect what's needed):
+- If blurry or low-resolution: increase sharpness and upscale to 4K
+- If black & white: add natural, realistic colors with authentic skin tones
+- If faded or yellowed: restore natural color balance
+- Remove digital noise, grain, film grain, stains, tears, and compression artifacts
+- Improve brightness/contrast only if clearly needed
+
+Output: return the exact same photo with only the necessary technical corrections applied. The people, faces, and composition must be 100% identical to the original.`
     );
   },
 
   restoreImageHD: async (imageFile: File): Promise<string> => {
     return editImageWithGemini(
       imageFile,
-      "Clean and enhance this photograph to clear HD quality. Sharpen all features and remove noise. CRITICAL: Maintain perfect identity and likeness 100%. No changes to facial structure. The result should be clean, sharp, and high-quality, looking like it was taken with a modern digital camera."
+      `You are a professional photo enhancement tool. Your ONLY task is image technical enhancement — NOT creative reimagination.
+
+STRICT RULES (NEVER VIOLATE):
+- DO NOT change any person's face, facial features, identity, or likeness in any way.
+- DO NOT alter eye shape, nose, mouth, skin tone, hair, or any facial structure.
+- DO NOT add, remove, or move any element in the image.
+- DO NOT apply any artistic or illustrative effect.
+
+ALLOWED corrections ONLY:
+- Increase sharpness and clarity
+- Remove digital noise and compression artifacts
+- Enhance fine detail
+- Upscale to HD quality
+
+Output: return the exact same photo with only sharpness and clarity improvements. Every person must look exactly the same as in the original.`
     );
   },
 
   colorizeImage: async (imageFile: File): Promise<string> => {
     return editImageWithGemini(
       imageFile,
-      "Professionally colorize this black and white photo with vivid, realistic, and era-appropriate colors. Ensure skin tones are natural and lifelike. CRITICAL: Maintain the original facial identity and structure perfectly. Improve sharpness while keeping the photorealistic look. No plastic or painted appearance."
+      `You are a professional photo colorization tool. Your ONLY task is adding realistic color to a black and white photograph.
+
+STRICT RULES (NEVER VIOLATE):
+- DO NOT change any person's face, facial features, identity, or likeness in any way.
+- DO NOT alter facial structure, expressions, hair style, or body proportions.
+- DO NOT change the composition, framing, or any object in the scene.
+- DO NOT apply any artistic or illustrative effect.
+
+ALLOWED corrections ONLY:
+- Add natural, era-appropriate, realistic colors to the entire image
+- Use authentic skin tones that match the subject's apparent ethnicity
+- Color clothing, backgrounds, and objects with historically accurate or contextually appropriate colors
+- Maintain correct light and shadow logic when adding colors
+
+Output: return the same photo with beautiful, realistic colors added. The faces and identities must be 100% preserved exactly as in the original.`
     );
   },
 
   cartoonizeImage: async (imageFile: File): Promise<string> => {
     return editImageWithGemini(
       imageFile,
-      "Turn this photo into a beautiful Pixar style 3D cartoon artwork. Maintain the same composition, lighting, and general recognizability of the subject."
+      "Transform this photo into a beautiful Pixar-style 3D animated movie artwork. Use vibrant colors, soft cell-shading, and exaggerated but recognizable facial features in the style of modern Pixar animations. Maintain the same composition and the general likeness of the subjects."
     );
-  }
+  },
 };
