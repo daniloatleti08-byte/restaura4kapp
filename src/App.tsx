@@ -34,7 +34,7 @@ export default function App() {
             Falar com especialista
           </div>
           <a
-            href="https://wa.me/5500000000000"
+            href="https://wa.me/5511959832030?text=preciso%20de%20ajuda%20com%20a%20restaura%C3%A7%C3%A3o%20da%20foto"
             target="_blank"
             rel="noopener noreferrer"
             className="w-14 h-14 bg-[#25D366] rounded-full flex items-center justify-center text-white shadow-[0_10px_25px_rgba(37,211,102,0.4)] hover:scale-110 transition-transform active:scale-95"
